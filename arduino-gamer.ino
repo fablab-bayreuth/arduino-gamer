@@ -27,6 +27,9 @@
 #define PIN_POTI_L A2
 #define PIN_POTI_R A3
 
+#define PIN_BEEPER 6
+#define PIN_BEEPER_GND 7
+
 int state_button_a = LOW;
 int state_button_b = LOW;
 int state_button_c = LOW;
@@ -49,11 +52,65 @@ void setup() {
 
   display.clearDisplay();
   display.display();
+
+  splash();
+  soundStart();
 }
 
 void loop() {
   readInputs();
   draw();
+}
+
+void soundStart() 
+{
+  pinMode(PIN_BEEPER_GND, OUTPUT);
+  pinMode(PIN_BEEPER, OUTPUT);
+  
+  tone(PIN_BEEPER, 500);
+  delay(80);
+  noTone(PIN_BEEPER);
+  delay(100);
+  tone(PIN_BEEPER, 500);
+  delay(80);
+  noTone(PIN_BEEPER);
+  delay(100);
+  tone(PIN_BEEPER, 500);
+  delay(80);
+  noTone(PIN_BEEPER);
+  delay(100);
+  tone(PIN_BEEPER, 1000);
+  delay(500);
+  noTone(PIN_BEEPER);
+
+  pinMode(PIN_BEEPER_GND, INPUT);
+  pinMode(PIN_BEEPER, INPUT);
+
+  delay(500);
+}
+
+void splash() {
+  display.clearDisplay(); 
+  
+  // Das Bild wurde konvertiert mit http://javl.github.io/image2cpp/
+  display.drawBitmap(0, 0, logo, 40, 40, WHITE);
+
+  display.setCursor(8, 56);
+  display.print("V1.0");
+  
+  const int column_2 = 48;
+
+  display.setCursor(column_2, 0);
+  display.print("Arduino Gamer");
+
+  display.drawFastHLine(column_2, 10, SCREEN_WIDTH-column_2, WHITE);
+
+  display.setCursor(column_2, 14);
+  display.print("Testanwendung");
+  display.setCursor(column_2, 14+9);
+  display.print(" by thirsch");
+
+  display.display();
 }
 
 void readInputs() {
