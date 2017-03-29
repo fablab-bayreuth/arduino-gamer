@@ -47,6 +47,9 @@ Adafruit_SSD1306 display(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 
 void setup() {
   display.begin(SSD1306_SWITCHCAPVCC);
+  display.ssd1306_command(SSD1306_SETDISPLAYCLOCKDIV); // Set maximum diplay clock
+  display.ssd1306_command(0xF0);                       
+  
   display.setTextColor(WHITE);
   display.setTextSize(FONT_SIZE);
 
@@ -60,6 +63,7 @@ void setup() {
 void loop() {
   readInputs();
   draw();
+  sound();
 }
 
 void soundStart() 
@@ -83,8 +87,8 @@ void soundStart()
   delay(500);
   noTone(PIN_BEEPER);
 
-  pinMode(PIN_BEEPER_GND, INPUT);
-  pinMode(PIN_BEEPER, INPUT);
+//  pinMode(PIN_BEEPER_GND, INPUT);
+//  pinMode(PIN_BEEPER, INPUT);
 
   delay(500);
 }
@@ -126,6 +130,14 @@ void readInputs() {
   position_stick_y = analogRead(PIN_STICK_Y);
   position_poti_l = analogRead(PIN_POTI_L);
   position_poti_r = analogRead(PIN_POTI_R);
+}
+
+void sound(void)
+{
+    if (state_button_c == 0)
+        tone(PIN_BEEPER, position_poti_l);
+    else
+        noTone(PIN_BEEPER);
 }
 
 void draw() {
