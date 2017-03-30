@@ -10,24 +10,30 @@
 // SM: drop dependecy of FLexiTimer2. Use a cooperative task handler instead.
 //#include "FlexiTimer2.h"
 
-// SM: Gamer Joystick shield:
-#define BUTTON_A  2
-#define BUTTON_B  3
-#define BUTTON_C  4
-#define BUTTON_D  5
+// SM: Arduino Gamer Joystick shield:
 #define BUTTON_ACTIVE_LOW
+#define PIN_BUTTON_A  2
+#define PIN_BUTTON_B  3
+#define PIN_BUTTON_C  4
+#define PIN_BUTTON_D  5
+#define PIN_STICK_X   A0
+#define PIN_STICK_Y   A1
+#define STICK_XY_THRES  5  
+
+int16_t stick_x_center, stick_y_center;
+
 
 //** control pins
-#define FIRE_PIN BUTTON_A
-#define FIRE_INTERRUPT 0
-#define LEFT_PIN  BUTTON_D
-#define RIGHT_PIN BUTTON_B
+#define FIRE_PIN   PIN_BUTTON_A
+#define FIRE_INTERRUPT  0    // INT0 is connected to Pin 2 (BUTTON A)
+#define LEFT_PIN   PIN_BUTTON_D
+#define RIGHT_PIN  PIN_BUTTON_B
 
 volatile int fireStatus = 0;
 volatile int moveLeft = 0;
 volatile int moveRight = 0;
 
-//** pin connections
+// pin connections, SM: Adapted to Arduino-Gamer
 #define SPEAKER_PIN 6
 #define MOSI_PIN 12
 #define CLK_PIN 13
@@ -52,6 +58,10 @@ void setup() {
 
   pinMode(LEFT_PIN, INPUT);
   pinMode(RIGHT_PIN, INPUT);
+
+  // SM: sample joystick center positions
+  stick_x_center = analogRead(PIN_STICK_X);
+  stick_y_center = analogRead(PIN_STICK_Y);
   
 //  FlexiTimer2::set(20, sampleMovement);
 //  FlexiTimer2::start();
@@ -111,6 +121,13 @@ void handle_buttons(void)
     moveLeft = digitalRead(LEFT_PIN);
     moveRight = digitalRead(RIGHT_PIN);
   #endif
+
+  int16_t stick_x = analogRead(PIN_STICK_X);
+  if (abs(stick_x - stick_x_center) >= STICK_XY_THRES)  {
+    if (stick_x < stick_x_center)  moveLeft |= 1;
+    if (stick_x > stick_x_center)  moveRight |= 1;
+  }
+    
 }
 
 
