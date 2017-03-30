@@ -7,7 +7,7 @@
 
  */
 
-// SM: drop dependecy of FLexiTimer2
+// SM: drop dependecy of FLexiTimer2. Use a cooperative task handler instead.
 //#include "FlexiTimer2.h"
 
 // SM: Gamer Joystick shield:
@@ -52,6 +52,7 @@ void setup() {
 
   pinMode(LEFT_PIN, INPUT);
   pinMode(RIGHT_PIN, INPUT);
+  
 //  FlexiTimer2::set(20, sampleMovement);
 //  FlexiTimer2::start();
 
@@ -67,7 +68,8 @@ void setup() {
 
 void loop() {
 
-  readButtons();
+  handle_buttons();
+  //readButtons();
   
   if(gameBoard.beginRecalc()) {
     if(moveLeft) gameBoard.moveLeft();
@@ -87,40 +89,30 @@ void loop() {
   soundSystem.next();
 }
 
-void sampleMovement() {
-  moveLeft = digitalRead(LEFT_PIN);
-  moveRight = digitalRead(RIGHT_PIN);
-}
 
-void readButtons(void)
+//void sampleMovement() {
+//  moveLeft = digitalRead(LEFT_PIN);
+//  moveRight = digitalRead(RIGHT_PIN);
+//}
+
+
+//SM: cooperative task to sample direction buttons
+void handle_buttons(void)
 {
-  static uint8_t  button_left_old, button_right_old;    // previous button states
-  static uint32_t button_left_time, button_right_time;  // last button change times
-  uint8_t button_left = digitalRead(LEFT_PIN),
-          button_right = digitalRead(RIGHT_PIN);
+  static uint32_t last_time;
   uint32_t now = millis();
-
-  if (button_left != button_left_old  && now - button_left_time > 20)  {
-    button_left_old = button_left;
-    button_left_time = now;
-    #ifdef BUTTON_ACTIVE_LOW
-      moveLeft = !button_left;
-    #else
-      moveLeft = button_left;
-    #endif
-  }
-
-  if (button_right != button_right_old  && now - button_right_time > 20)  {
-    button_right_old = button_right;
-    button_right_time = now;
-    #ifdef BUTTON_ACTIVE_LOW
-      moveRight = !button_right;
-    #else
-      moveRight = button_right;
-    #endif
-  }
-
+  if (now - last_time < 20)  return;
+  last_time = now;
+  
+  #ifdef BUTTON_ACTIVE_LOW
+    moveLeft = !digitalRead(LEFT_PIN);
+    moveRight = !digitalRead(RIGHT_PIN);
+  #else
+    moveLeft = digitalRead(LEFT_PIN);
+    moveRight = digitalRead(RIGHT_PIN);
+  #endif
 }
+
 
 void handleFireButtonPress() {
   fireStatus = 1;
