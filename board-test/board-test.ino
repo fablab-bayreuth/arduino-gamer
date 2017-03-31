@@ -1,12 +1,12 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#include "Gamer_SSD1306.h"
 #include "fablablogo.h"
 
 #define OLED_CLK   13
-#define OLED_MOSI  12
-#define OLED_RESET 11
+#define OLED_MOSI    11  // Hardware SPI port
+#define OLED_RESET   12
 #define OLED_DC    10
 #define OLED_CS     9
 
@@ -43,7 +43,8 @@ int position_stick_y = 0;
 int position_poti_l = 0;
 int position_poti_r = 0;
 
-Adafruit_SSD1306 display(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
+Gamer_SSD1306 display(OLED_DC, OLED_RESET, OLED_CS);
+
 
 void setup() {
   display.begin(SSD1306_SWITCHCAPVCC);

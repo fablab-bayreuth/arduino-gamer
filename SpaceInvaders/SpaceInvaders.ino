@@ -35,11 +35,11 @@ volatile int moveRight = 0;
 
 // pin connections, SM: Adapted to Arduino-Gamer
 #define SPEAKER_PIN 6
-#define MOSI_PIN 12
+#define MOSI_PIN 11
 #define CLK_PIN 13
 #define DC_PIN 10
 #define CS_PIN 9
-#define RST_PIN 11
+#define RST_PIN 12
 
 #include "oled_driver.h"
 #include "buffered_display.h"

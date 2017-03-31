@@ -14,7 +14,7 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#include "Gamer_SSD1306.h"
 #include "fablablogo.h"
 
 //Define Pins
@@ -24,8 +24,8 @@
 #define CONTROL_B A3
 
 #define OLED_CLK   13
-#define OLED_MOSI  12
-#define OLED_RESET 11
+#define OLED_MOSI  11  // Hardware SPI port
+#define OLED_RESET 12
 #define OLED_DC    10
 #define OLED_CS     9
 
@@ -45,7 +45,7 @@
 
 
 //Define Variables
-Adafruit_SSD1306 display(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
+Gamer_SSD1306 display(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 
 int paddleLocationA = 0;
 int paddleLocationB = 0;
