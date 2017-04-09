@@ -1,3 +1,5 @@
+// Adapted for the Fablab Bayreuth Arduino-Gamer project
+
 /* Tiny Tetris V0.94 
                                     
 Copyright (C) 2016 Anthony Russell
@@ -28,19 +30,24 @@ Create defines for all the magic numbers but they are useful for now.
 #include "dpad.cpp"
 
 #define OLED_ADDRESS	        	0x3C //you may need to change this, this is the OLED I2C address.  
-#define OLED_COMMAND	                0x80
-#define OLED_DATA	                0x40
-#define OLED_DISPLAY_OFF	        0xAE
-#define OLED_DISPLAY_ON	                0xAF
-#define OLED_NORMAL_DISPLAY	    	0xA6
-#define OLED_INVERSE_DISPLAY     	0xA7
+#define OLED_COMMAND	              0x80
+#define OLED_DATA	                  0x40
+#define OLED_DISPLAY_OFF	          0xAE
+#define OLED_DISPLAY_ON	            0xAF
+#define OLED_NORMAL_DISPLAY	    	  0xA6
+#define OLED_INVERSE_DISPLAY     	  0xA7
+#define OLED_SET_CLOCK              0xD5
 #define OLED_SET_BRIGHTNESS	        0x81
+#define OLED_SET_CHARGEPUMP         0x8D
 #define OLED_SET_ADDRESSING	        0x20
+#define OLED_SET_COLUMNADDR         0x21
+#define OLED_SET_PAGEADDR           0x22
 #define OLED_HORIZONTAL_ADDRESSING	0x00
-#define OLED_VERTICAL_ADDRESSING	0x01
-#define OLED_PAGE_ADDRESSING	        0x02
-#define OLED_SET_COLUMN                 0x21
-#define OLED_SET_PAGE	                0x22
+#define OLED_VERTICAL_ADDRESSING	  0x01
+#define OLED_PAGE_ADDRESSING	      0x02
+#define OLED_SET_COLUMN             0x21
+#define OLED_SET_PAGE	              0x22
+
 
 // the tetris blocks
 const byte Blocks[7][2] PROGMEM = {
@@ -177,19 +184,30 @@ const byte brickLogo[36][8] PROGMEM= {
 };
 
 
-// SM: Arduino gamer pin assignments
-#define KEY_MIDDLE  8  // Stick
-#define KEY_LEFT    5  // D
-#define KEY_RIGHT   3  // B
-#define KEY_DOWN    4  // C
-#define KEY_ROTATE  2  // A
+// SM: Gamer buttons. Note: Display is rotated 90 degrees anit-clockwise for this game.
+#define KEYPAD_A  2
+#define KEYPAD_B  3
+#define KEYPAD_C  4
+#define KEYPAD_D  5
+
+#define KEY_LEFT    KEYPAD_C
+#define KEY_RIGHT   KEYPAD_A
+#define KEY_DOWN    KEYPAD_B
+#define KEY_ROTATE  KEYPAD_D
+
+void key_init(void)
+{
+  pinMode(KEY_LEFT, INPUT);
+  pinMode(KEY_RIGHT, INPUT);
+  pinMode(KEY_DOWN, INPUT);
+  pinMode(KEY_ROTATE, INPUT);
+}
+
 
 #define PIEZO_PIN   6
 #define PIEZO_PIN_GND  7
-
-
-#define LED_PIN     13
-#define KEYPAD_PIN  A0
+#define LED_PIN     A5  // SM: not resent on the gamer
+#define KEYPAD_PIN  A4  // SM: not used in the entire code?
 
 //struct for pieces
 
@@ -227,10 +245,10 @@ int lastKey = 0;
 
 // SM: Ported to SPI interface
 #define OLED_RESET 12
-#define OLED_DC  10
-#define OLED_CS  9
-#define OLED_SCK  13
-#define OLED_MOSI 11
+#define OLED_DC    10
+#define OLED_CS    9
+#define OLED_SCK   13
+#define OLED_MOSI  11
 
 
 void oled_init(void)
@@ -238,6 +256,8 @@ void oled_init(void)
   pinMode(OLED_RESET, OUTPUT);
   pinMode(OLED_DC, OUTPUT);
   pinMode(OLED_CS, OUTPUT);
+  pinMode(OLED_SCK, OUTPUT);
+  pinMode(OLED_MOSI, OUTPUT);
   
   // HW-Reset display
   digitalWrite(OLED_RESET, HIGH);
@@ -253,7 +273,16 @@ void oled_init(void)
   #else
     SPI.setClockDivider (4);
   #endif
+
+  // Init display  SM: delays in original version, can be dropped
+  OLEDCommand(OLED_DISPLAY_OFF);
+  OLEDCommand(OLED_SET_CLOCK, 0xF0);
+  OLEDCommand(OLED_SET_CHARGEPUMP, 0x14);
+  OLEDCommand(OLED_NORMAL_DISPLAY);
+  oled_clear();
+  OLEDCommand(OLED_DISPLAY_ON);
 }
+
 
 void OLEDCommand(byte command) {
     digitalWrite(OLED_CS, HIGH);
@@ -261,6 +290,19 @@ void OLEDCommand(byte command) {
     digitalWrite(OLED_CS, LOW);
     SPI.transfer(command);
     digitalWrite(OLED_CS, HIGH);
+}
+
+void OLEDCommand(byte command, byte param)  // SM: For convenience
+{
+    OLEDCommand(command);
+    OLEDCommand(param);
+}
+
+void OLEDCommand(byte command, byte param1, byte param2)
+{
+    OLEDCommand(command);
+    OLEDCommand(param1);
+    OLEDCommand(param2);
 }
 
 
@@ -273,6 +315,18 @@ void OLEDData(byte data) {
 }
 
 
+void oled_clear(void)
+{
+  OLEDCommand(OLED_SET_COLUMNADDR, 0, 127);
+  OLEDCommand(OLED_SET_PAGEADDR, 0, 7);
+  digitalWrite(OLED_CS, HIGH);
+  digitalWrite(OLED_DC, HIGH);
+  digitalWrite(OLED_CS, LOW);
+  for (uint16_t i=0; i<128*7; i++)  
+    SPI.transfer(0);
+  digitalWrite(OLED_CS, HIGH);
+}
+
 void setup() {
   Serial.begin(9600);
   while (!Serial);
@@ -284,17 +338,8 @@ void setup() {
   pinMode(PIEZO_PIN_GND, OUTPUT);
   pinMode(LED_PIN, OUTPUT);
 
-  OLEDCommand(OLED_DISPLAY_OFF);
-  delay(20);
-  OLEDCommand(OLED_DISPLAY_ON);
-  delay(20);
-  OLEDCommand(OLED_NORMAL_DISPLAY);
-  delay(20);
-  OLEDCommand(0x8D);
-  delay(20);
-  OLEDCommand(0x14);
-  delay(20);
-  OLEDCommand(OLED_NORMAL_DISPLAY);
+  key_init();
+  oled_init();
 
   fillTetrisScreen(0);
 
@@ -953,7 +998,65 @@ void tetrisScreenToSerial() {
 }
 
 
-bool processKeys() {
+//=======================================================================================
+//SM: Gamer keyboard
+
+#define KEY_DEBOUNCE_MS  5
+#define KEY_REPEAT_MS    200
+#define KEY_REPEAT_DOWN_MS  75
+
+struct KeyState {
+    uint32_t  last_trig;
+    unsigned  old_state : 1;  // current debounced state
+}  key_state[4];
+
+
+// Simple debounce/repeat: Lock button for KEY_DEBOUNCE_MS after event,
+// retrigger every KEY_REPEAT_MS if still active.
+// Return true for a key event
+uint8_t key_debounce( uint8_t key_no, uint8_t state, uint8_t repeat)
+{
+  if (key_no >= 4)  return 0;
+  uint32_t now = millis();
+  uint32_t tdiff = now - key_state[key_no].last_trig;
+  if (tdiff < KEY_DEBOUNCE_MS)  return 0;
+  key_state[key_no].old_state = state;
+  if (state)  {      
+    if( !key_state[key_no].old_state  ||   // rising transition
+         tdiff >= repeat)  {  // retrigger interval
+      key_state[key_no].last_trig = now;
+      return 1;
+    }
+  }
+  return 0;
+}
+
+
+void processKeys(void) 
+{
+  uint8_t  
+    left  = key_debounce( 0, !digitalRead(KEY_LEFT),   KEY_REPEAT_MS ),
+    right = key_debounce( 1, !digitalRead(KEY_RIGHT),  KEY_REPEAT_MS ),
+    down  = key_debounce( 2, !digitalRead(KEY_DOWN),   KEY_REPEAT_DOWN_MS ),
+    rot   = key_debounce( 3, !digitalRead(KEY_ROTATE), KEY_REPEAT_MS );
+    
+  if (left)  movePieceLeft();
+  if (right) movePieceRight();
+  if (down)  movePieceDown();
+  if (rot)   RotatePiece();
+  
+  if (left | right | down | rot) {
+    drawPiece();
+    drawTetrisScreen();
+  }
+}
+
+
+//=======================================================================================
+
+// SM: original version uses a keypad with analog levels
+
+bool processKeys_orig() {
 
   bool keypressed = true;
   int leftRight = 300 - acceleration;
@@ -1003,6 +1106,7 @@ bool processKeys() {
   }
 }
 
+//=======================================================================================
 
 void setScore(long score, bool blank)
 
@@ -1286,38 +1390,32 @@ void loop() {
   //To do: create high score system that savees to EEprom
   gameOver = false;
   score = 0;
+
+  // SM: removed some superfluous screen initialisation
+  
   fillTetrisArray(1); //fill with 1's to make border
-  fillTetrisScreen(2);
-  drawTetrisScreen();
-  delay(200);
   fillTetrisScreen(3);
   drawTetrisScreen();
-  delay(200);
   drawSides();
   drawBottom();
-
-  // tetrisScreenToSerial();
-
-  OLEDCommand(OLED_INVERSE_DISPLAY);
-  delay(200);
-  OLEDCommand(OLED_NORMAL_DISPLAY);
 
   loadPiece(random(1, 8), 20, 5, true);
   drawTetrisScreen();
   nextPiece = random(1, 8);
   setNextBlock(nextPiece);
 
-  setScore(0, false);
-  delay(300);
   setScore(0, true);
-  delay(300);
   setScore(0, false);
-  byte rnd = 0;
-
+  
   drawTetrisTitle(false);
 
-  TetrisTheme::start();
-  while(songOn) TetrisTheme::tetrisThemePlay();
+// SM: Todo: audio theme is blocking until A0 low (hardcoded)
+//  TetrisTheme::start();
+//  while(songOn) TetrisTheme::tetrisThemePlay();
+
+  // SM: Wait for key down to start game
+  while (digitalRead(KEY_DOWN) != 0)
+     ;
 
   drawTetrisTitle(true);
   drawSides();
