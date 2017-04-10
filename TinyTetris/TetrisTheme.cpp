@@ -16,7 +16,11 @@
 #include <Arduino.h>
 
 #ifndef PIEZO_PIN
-#define PIEZO_PIN  (3)
+#define PIEZO_PIN  (6)  // SM: Adapted to Arduino-Gamer
+#endif
+
+#ifndef KEY_DOWN
+#define KEY_DOWN  3
 #endif
 
 // A rest
@@ -198,7 +202,8 @@ class TetrisTheme {
       TCCR1B = (1 << CS10); // Set prescaler to divide by 8
       TIMSK1 = (1 << OCIE1A); // Call ISR when TCNT2 = OCRA2
       OCR1A = 0;// Set frequency of generated wave
-      sei(); // Enable interrupts to generate waveform!*/
+      sei(); // Enable interrupts to generate waveform!
+      */
       songOn = false;
     }
   
@@ -212,7 +217,6 @@ class TetrisTheme {
     }
 
     static void tetrisThemePlay() {
-      
       if (!songOn) {
         return;
       }
@@ -253,8 +257,8 @@ class TetrisTheme {
           curr_bass_note++;
           curr_bass_note_time_remaining = 0.5;// bass_times[curr_bass_note]; // hardcoded
         }
-        
-        if(digitalRead(A0) == LOW) {
+
+        if(digitalRead(KEY_DOWN) == LOW) {  // SM: Adapted to Gamer keypad
           songOn = false; 
         }
       }

@@ -1001,6 +1001,13 @@ void tetrisScreenToSerial() {
 //=======================================================================================
 //SM: Gamer keyboard
 
+
+uint8_t keyPressed(void)  {
+  return (!digitalRead(KEY_LEFT) || !digitalRead(KEY_RIGHT) ||
+          !digitalRead(KEY_DOWN) || !digitalRead(KEY_ROTATE) );
+}
+
+
 #define KEY_DEBOUNCE_MS  5
 #define KEY_REPEAT_MS    200
 #define KEY_REPEAT_DOWN_MS  75
@@ -1030,6 +1037,7 @@ uint8_t key_debounce( uint8_t key_no, uint8_t state, uint8_t repeat)
   }
   return 0;
 }
+
 
 
 void processKeys(void) 
@@ -1409,13 +1417,8 @@ void loop() {
   
   drawTetrisTitle(false);
 
-// SM: Todo: audio theme is blocking until A0 low (hardcoded)
-//  TetrisTheme::start();
-//  while(songOn) TetrisTheme::tetrisThemePlay();
-
-  // SM: Wait for key down to start game
-  while (digitalRead(KEY_DOWN) != 0)
-     ;
+  TetrisTheme::start();
+  while(songOn) TetrisTheme::tetrisThemePlay();
 
   drawTetrisTitle(true);
   drawSides();
