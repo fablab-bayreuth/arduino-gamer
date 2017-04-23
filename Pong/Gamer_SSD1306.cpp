@@ -227,7 +227,7 @@ void Gamer_SSD1306::begin(uint8_t vccstate, uint8_t i2caddr, bool reset) {
   // Init sequence
   ssd1306_command(SSD1306_DISPLAYOFF);                    // 0xAE
   ssd1306_command(SSD1306_SETDISPLAYCLOCKDIV);            // 0xD5
-  ssd1306_command(0x80);                                  // the suggested ratio 0x80
+  ssd1306_command(0xF0);                                  // SM: set to maximum clock
 
   ssd1306_command(SSD1306_SETMULTIPLEX);                  // 0xA8
   ssd1306_command(SSD1306_LCDHEIGHT - 1);

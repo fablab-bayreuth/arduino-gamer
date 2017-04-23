@@ -69,8 +69,6 @@ void setup()
   digitalWrite(BEEPER_GND, LOW);
   
   display.begin(SSD1306_SWITCHCAPVCC);  // initialize with the I2C addr 0x3D (for the 128x64)
-  display.ssd1306_command(SSD1306_SETDISPLAYCLOCKDIV); // Set maximum diplay clock
-  display.ssd1306_command(0xF0);                       
   display.clearDisplay();   // clears the screen and buffer
   display.display();   
   display.setTextWrap(false);
