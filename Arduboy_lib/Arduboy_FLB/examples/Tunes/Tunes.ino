@@ -1,4 +1,4 @@
-#include "Arduboy.h"
+#include "Arduboy_FLB.h"
 
 const byte PROGMEM score [] = {
   // Sinfonia No.12 in A major BWV.798 J.S.Bach

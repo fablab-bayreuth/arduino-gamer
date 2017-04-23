@@ -1,4 +1,4 @@
-#include "Arduboy.h"
+#include "Arduboy_FLB.h"
 #include "audio.h"
 
 const byte PROGMEM tune_pin_to_timer_PGM[] = { 3, 1 };

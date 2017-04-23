@@ -42,29 +42,40 @@
 
     #define CS 9
     #define DC 10
-    #define RST 11
+    #define RST 12
 
-    // Not present on this hardware
+    // Not present in this hardware
     //#define RED_LED 10
     //#define GREEN_LED 11
     //#define BLUE_LED 9
     //#define TX_LED 30
     //#define RX_LED 17
 
-    // RIght hand keypad
-    #define PIN_LEFT_BUTTON  5     // D button on right keypad
-    #define PIN_RIGHT_BUTTON 3     // B
-    #define PIN_UP_BUTTON    2     // A
-    #define PIN_DOWN_BUTTON  4     // C
-    #define PIN_A_BUTTON 2
-    #define PIN_B_BUTTON 3
+    // Right keypad on Arduino-Gamer
+    #define PIN_GAMER_A  2       // PD2
+    #define PIN_GAMER_B  3       // PD3
+    #define PIN_GAMER_C  4       // PD4
+    #define PIN_GAMER_D  5       // PD5
+    #define PIN_GAMER_STICK  8   // PB0
     
-    #define LEFT_BUTTON _BV(5)
-    #define RIGHT_BUTTON _BV(6)
-    #define UP_BUTTON _BV(7)
-    #define DOWN_BUTTON _BV(4)
-    #define A_BUTTON _BV(3)
-    #define B_BUTTON _BV(2)
+    #define PIN_LEFT_BUTTON   PIN_GAMER_D
+    #define PIN_RIGHT_BUTTON  PIN_GAMER_B
+    #define PIN_UP_BUTTON     PIN_GAMER_A
+    #define PIN_DOWN_BUTTON   PIN_GAMER_C
+    #define PIN_A_BUTTON      PIN_GAMER_STICK   
+    #define PIN_B_BUTTON      PIN_GAMER_A
+    
+    // These bits are used by the API to denote button states
+    // NOTE: If these are changed, the corresponding evaluation procedure in 
+    //       ArduboyCore::buttonsState() needs to be changed accordingly!
+    #define LEFT_BUTTON  _BV(0)   // Directions are mapped to the analog stick
+    #define RIGHT_BUTTON _BV(1)  
+    #define UP_BUTTON    _BV(6)     
+    #define DOWN_BUTTON  _BV(7)   
+    #define A_BUTTON _BV(2)
+    #define B_BUTTON _BV(3)
+    #define C_BUTTON _BV(4)
+    #define D_BUTTON _BV(5)
     
     //TODO
     //#define PIN_SPEAKER_1 5
@@ -77,78 +88,78 @@
 
 #elif defined ARDUBOY_10
 
-#define CS 12
-#define DC 4
-#define RST 6
+    #define CS 12
+    #define DC 4
+    #define RST 6
 
-#define RED_LED 10
-#define GREEN_LED 11
-#define BLUE_LED 9
-#define TX_LED 30
-#define RX_LED 17
+    #define RED_LED 10
+    #define GREEN_LED 11
+    #define BLUE_LED 9
+    #define TX_LED 30
+    #define RX_LED 17
 
-// pin values for buttons, probably shouldn't use these
-#define PIN_LEFT_BUTTON A2
-#define PIN_RIGHT_BUTTON A1
-#define PIN_UP_BUTTON A0
-#define PIN_DOWN_BUTTON A3
-#define PIN_A_BUTTON 7
-#define PIN_B_BUTTON 8
+    // pin values for buttons, probably shouldn't use these
+    #define PIN_LEFT_BUTTON A2
+    #define PIN_RIGHT_BUTTON A1
+    #define PIN_UP_BUTTON A0
+    #define PIN_DOWN_BUTTON A3
+    #define PIN_A_BUTTON 7
+    #define PIN_B_BUTTON 8
 
-// bit values for button states
-#define LEFT_BUTTON _BV(5)
-#define RIGHT_BUTTON _BV(6)
-#define UP_BUTTON _BV(7)
-#define DOWN_BUTTON _BV(4)
-#define A_BUTTON _BV(3)
-#define B_BUTTON _BV(2)
+    // bit values for button states
+    #define LEFT_BUTTON _BV(5)
+    #define RIGHT_BUTTON _BV(6)
+    #define UP_BUTTON _BV(7)
+    #define DOWN_BUTTON _BV(4)
+    #define A_BUTTON _BV(3)
+    #define B_BUTTON _BV(2)
 
-#define PIN_SPEAKER_1 5
-#define PIN_SPEAKER_2 13
+    #define PIN_SPEAKER_1 5
+    #define PIN_SPEAKER_2 13
 
-#define PIN_SPEAKER_1_PORT &PORTC
-#define PIN_SPEAKER_2_PORT &PORTC
+    #define PIN_SPEAKER_1_PORT &PORTC
+    #define PIN_SPEAKER_2_PORT &PORTC
 
-#define PIN_SPEAKER_1_BITMASK _BV(6)
-#define PIN_SPEAKER_2_BITMASK _BV(7)
+    #define PIN_SPEAKER_1_BITMASK _BV(6)
+    #define PIN_SPEAKER_2_BITMASK _BV(7)
 
 #elif defined(AB_DEVKIT)
 
-#define CS 6
-#define DC 4
-#define RST 12
+    #define CS 6
+    #define DC 4
+    #define RST 12
 
-// map all LEDs to the single TX LED on DEVKIT
-#define RED_LED 17
-#define GREEN_LED 17
-#define BLUE_LED 17
-#define TX_LED 17
-#define RX_LED 17
+    // map all LEDs to the single TX LED on DEVKIT
+    #define RED_LED 17
+    #define GREEN_LED 17
+    #define BLUE_LED 17
+    #define TX_LED 17
+    #define RX_LED 17
 
-// pin values for buttons, probably shouldn't use these
-#define PIN_LEFT_BUTTON 9
-#define PIN_RIGHT_BUTTON 5
-#define PIN_UP_BUTTON 8
-#define PIN_DOWN_BUTTON 10
-#define PIN_A_BUTTON A0
-#define PIN_B_BUTTON A1
+    // pin values for buttons, probably shouldn't use these
+    #define PIN_LEFT_BUTTON 9
+    #define PIN_RIGHT_BUTTON 5
+    #define PIN_UP_BUTTON 8
+    #define PIN_DOWN_BUTTON 10
+    #define PIN_A_BUTTON A0
+    #define PIN_B_BUTTON A1
 
-// bit values for button states
-#define LEFT_BUTTON _BV(5)
-#define RIGHT_BUTTON _BV(2)
-#define UP_BUTTON _BV(4)
-#define DOWN_BUTTON _BV(6)
-#define A_BUTTON _BV(1)
-#define B_BUTTON _BV(0)
+    // bit values for button states
+    #define LEFT_BUTTON _BV(5)
+    #define RIGHT_BUTTON _BV(2)
+    #define UP_BUTTON _BV(4)
+    #define DOWN_BUTTON _BV(6)
+    #define A_BUTTON _BV(1)
+    #define B_BUTTON _BV(0)
 
-#define PIN_SPEAKER_1 A2
-#define PIN_SPEAKER_2 A3
+    #define PIN_SPEAKER_1 A2
+    #define PIN_SPEAKER_2 A3
 
-#define PIN_SPEAKER_1_PORT &PORTF
-#define PIN_SPEAKER_2_PORT &PORTF
+    #define PIN_SPEAKER_1_PORT &PORTF
+    #define PIN_SPEAKER_2_PORT &PORTF
 
-#define PIN_SPEAKER_1_BITMASK _BV(5)
-#define PIN_SPEAKER_2_BITMASK _BV(4)
+    #define PIN_SPEAKER_1_BITMASK _BV(5)
+    #define PIN_SPEAKER_2_BITMASK _BV(4)
 
 #endif
 

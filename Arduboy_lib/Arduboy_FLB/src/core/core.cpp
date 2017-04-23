@@ -1,5 +1,8 @@
 #include "core.h"
 
+// SM: Use background adc acquisition for analog stick evaluation
+#include "adc_async.h"
+
 // need to redeclare these here since we declare them static in .h
 volatile uint8_t *ArduboyCore::mosiport, 
   *ArduboyCore::csport, *ArduboyCore::dcport;
@@ -137,6 +140,10 @@ void ArduboyCore::bootPins()
   digitalWrite(RST, LOW);   // bring reset low
   delay(10);          // wait 10ms
   digitalWrite(RST, HIGH);  // bring out of reset
+  
+  //SM: Use adc_async for background acquisition of the analog stick
+  adc_async_init();
+  sei();
 }
 
 void ArduboyCore::bootLCD()
@@ -192,7 +199,8 @@ void ArduboyCore::idle()
 
 void ArduboyCore::saveMuchPower()
 {
-  power_adc_disable();
+  //power_adc_disable();  // SM: Keep ADC on (needed for analog stick)
+  
   power_usart0_disable();
   power_twi_disable();
   // timer 0 is for millis()
@@ -335,6 +343,44 @@ uint8_t ArduboyCore::buttonsState()
   buttons = buttons | (((~PINE) & B01000000) >> 3);
   // B (right)
   buttons = buttons | (((~PINB) & B00010000) >> 2);
+  
+// SM: Button evaluation for Arduino-Gamer clone (ATmega328)
+#elif defined(AB_CLONE_FLB)  
+  #if defined(__AVR_ATmega328P__)
+  
+    // Use digital direction buttons
+    ////buttons = ((~PIND) & 0b00111100);  // left, down, right, up/A
+    ////buttons |= ((~PINB) & 0b00000001);  // Stick
+    
+    // Use analog stick directions
+    buttons = 0;
+    uint8_t analog_stick;
+    
+    #define STICK_X_CHAN  0
+    #define STICK_Y_CHAN  1
+    #define STICK_ZERO  128
+    #define STICK_THRES  6
+    
+    if ( adc_async_available() )  {
+        analog_stick = adc_async_get_last_res( STICK_X_CHAN ) >> 2;  // Use the 8 uppermost bits only
+        if (analog_stick > STICK_THRES + STICK_ZERO)
+            buttons |= RIGHT_BUTTON;
+        else if (analog_stick < -STICK_THRES + STICK_ZERO)
+            buttons |= LEFT_BUTTON;
+        
+        analog_stick = adc_async_get_last_res( STICK_Y_CHAN ) >> 2;  
+        if (analog_stick > STICK_THRES + STICK_ZERO)
+            buttons |= UP_BUTTON;
+        else if (analog_stick < -STICK_THRES + STICK_ZERO)
+            buttons |= DOWN_BUTTON;
+    }
+    
+    // Push buttons
+    buttons |= ((~PIND) & 0b00111100);  // D, C, B, A
+    
+  #else
+    #error "Processor type not supported yet"
+  #endif
 #endif
   
   return buttons;
