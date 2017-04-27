@@ -205,7 +205,11 @@ void ArduboyCore::saveMuchPower()
   power_twi_disable();
   // timer 0 is for millis()
   // timers 1 and 3 are for music and sounds
-  power_timer2_disable();
+  
+  #if (! __AVR_ATmega328P__)  // SM: Use Timer 2 on Uno  
+    power_timer2_disable();
+  #endif
+  
   #ifdef HAVE_HWSERIAL1
     power_usart1_disable();
   #endif
@@ -348,35 +352,16 @@ uint8_t ArduboyCore::buttonsState()
 #elif defined(AB_CLONE_FLB)  
   #if defined(__AVR_ATmega328P__)
   
-    // Use digital direction buttons
-    ////buttons = ((~PIND) & 0b00111100);  // left, down, right, up/A
-    ////buttons |= ((~PINB) & 0b00000001);  // Stick
-    
-    // Use analog stick directions
-    buttons = 0;
-    uint8_t analog_stick;
-    
-    #define STICK_X_CHAN  0
-    #define STICK_Y_CHAN  1
-    #define STICK_ZERO  128
-    #define STICK_THRES  6
-    
-    if ( adc_async_available() )  {
-        analog_stick = adc_async_get_last_res( STICK_X_CHAN ) >> 2;  // Use the 8 uppermost bits only
-        if (analog_stick > STICK_THRES + STICK_ZERO)
-            buttons |= RIGHT_BUTTON;
-        else if (analog_stick < -STICK_THRES + STICK_ZERO)
-            buttons |= LEFT_BUTTON;
+    #if 0  // Use digital direction buttons
+        buttons = ((~PIND) & 0b00111100);  // left, down, right, up/A
+        buttons |= ((~PINB) & 0b00000001);  // Stick
         
-        analog_stick = adc_async_get_last_res( STICK_Y_CHAN ) >> 2;  
-        if (analog_stick > STICK_THRES + STICK_ZERO)
-            buttons |= UP_BUTTON;
-        else if (analog_stick < -STICK_THRES + STICK_ZERO)
-            buttons |= DOWN_BUTTON;
-    }
-    
-    // Push buttons
-    buttons |= ((~PIND) & 0b00111100);  // D, C, B, A
+    #else  // Use analog stick directions
+        buttons = analog_stick_get_state();
+        
+        // Push buttons
+        buttons |= ((~PIND) & 0b00111100);  // D, C, B, A
+    #endif
     
   #else
     #error "Processor type not supported yet"

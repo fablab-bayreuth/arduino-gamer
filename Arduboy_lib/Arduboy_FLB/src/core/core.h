@@ -40,51 +40,8 @@
 // Fablab Bayreuth clone hardware profile
 #if defined AB_CLONE_FLB
 
-    #define CS 9
-    #define DC 10
-    #define RST 12
-
-    // Not present in this hardware
-    //#define RED_LED 10
-    //#define GREEN_LED 11
-    //#define BLUE_LED 9
-    //#define TX_LED 30
-    //#define RX_LED 17
-
-    // Right keypad on Arduino-Gamer
-    #define PIN_GAMER_A  2       // PD2
-    #define PIN_GAMER_B  3       // PD3
-    #define PIN_GAMER_C  4       // PD4
-    #define PIN_GAMER_D  5       // PD5
-    #define PIN_GAMER_STICK  8   // PB0
+    #include "arduboy_flb_config.h"
     
-    #define PIN_LEFT_BUTTON   PIN_GAMER_D
-    #define PIN_RIGHT_BUTTON  PIN_GAMER_B
-    #define PIN_UP_BUTTON     PIN_GAMER_A
-    #define PIN_DOWN_BUTTON   PIN_GAMER_C
-    #define PIN_A_BUTTON      PIN_GAMER_STICK   
-    #define PIN_B_BUTTON      PIN_GAMER_A
-    
-    // These bits are used by the API to denote button states
-    // NOTE: If these are changed, the corresponding evaluation procedure in 
-    //       ArduboyCore::buttonsState() needs to be changed accordingly!
-    #define LEFT_BUTTON  _BV(0)   // Directions are mapped to the analog stick
-    #define RIGHT_BUTTON _BV(1)  
-    #define UP_BUTTON    _BV(6)     
-    #define DOWN_BUTTON  _BV(7)   
-    #define A_BUTTON _BV(2)
-    #define B_BUTTON _BV(3)
-    #define C_BUTTON _BV(4)
-    #define D_BUTTON _BV(5)
-    
-    //TODO
-    //#define PIN_SPEAKER_1 5
-    //#define PIN_SPEAKER_2 13
-    //#define PIN_SPEAKER_1_PORT &PORTC
-    //#define PIN_SPEAKER_2_PORT &PORTC
-    //#define PIN_SPEAKER_1_BITMASK _BV(6)
-    //#define PIN_SPEAKER_2_BITMASK _BV(7)
-
 
 #elif defined ARDUBOY_10
 
@@ -122,7 +79,8 @@
 
     #define PIN_SPEAKER_1_BITMASK _BV(6)
     #define PIN_SPEAKER_2_BITMASK _BV(7)
-
+    
+ 
 #elif defined(AB_DEVKIT)
 
     #define CS 6

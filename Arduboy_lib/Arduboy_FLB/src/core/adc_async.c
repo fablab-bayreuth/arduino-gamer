@@ -13,7 +13,7 @@
 
 //============================================================================================================
 
-#define ADC_ASYNC_N_CHAN  6  // Channels to sample, starting with channel 0
+#define ADC_ASYNC_N_CHAN  4  // Channels to sample, starting with channel 0
 
 static volatile struct {
     unsigned initialized : 1;
@@ -23,6 +23,43 @@ static volatile struct {
 
 static volatile uint8_t adc_async_valid = 0;
 static volatile uint16_t adc_async_res[ADC_ASYNC_N_CHAN];
+
+//============================================================================================================
+// Analog stick evaluation
+// TODO: Add a zero position calibration
+
+#include "arduboy_flb_config.h"
+
+// stick_state saves the direction flags in the same bits as 
+// the direction button flags (see core.h).
+static volatile uint8_t  stick_state;
+
+uint8_t analog_stick_get_state(void)
+{
+    return stick_state;
+}
+
+#define STICK_THRES_LEFT   (-ANALOG_STICK_THRES + ANALOG_STICK_ZERO)
+#define STICK_THRES_RIGHT  (+ANALOG_STICK_THRES + ANALOG_STICK_ZERO)
+
+void analog_stick_eval(void)
+{
+    register uint8_t state = 0;
+    
+    register uint16_t adc_res = adc_async_res[ANALOG_STICK_X_CHAN];
+    if (adc_res > STICK_THRES_RIGHT)
+        state |= RIGHT_BUTTON;
+    else if (adc_res < STICK_THRES_LEFT)
+        state |= LEFT_BUTTON;
+    
+    adc_res = adc_async_res[ANALOG_STICK_X_CHAN];
+    if (adc_res > STICK_THRES_RIGHT)
+        state |= UP_BUTTON;
+    else if (adc_res < STICK_THRES_LEFT)
+        state |= DOWN_BUTTON;
+
+    stick_state = state;
+}
 
 //============================================================================================================
 
@@ -62,7 +99,6 @@ uint8_t adc_async_available(void)
 uint16_t adc_async_get_last_res( uint8_t chan )
 {
   if (chan >= ADC_ASYNC_N_CHAN)  return 0;
-  if (!adc_async_state.valid)  return 0;
   uint8_t sreg_bak = SREG;
   cli();
   uint16_t res = adc_async_res[chan];
@@ -75,19 +111,15 @@ uint16_t adc_async_get_last_res( uint8_t chan )
 // ADC interrupt service
 ISR(ADC_vect)
 {
-  // Note: The adc interrupt flag is cleared automatically by hardware when
-  // executing the interrupt
-  
-  if (    adc_async_state.initialized == 0  
-      ||  adc_async_state.chan >= ADC_ASYNC_N_CHAN )    // should not happen normally
-    return;
+  if (adc_async_state.initialized == 0)  return;
 
-  uint16_t res = ADCL;  // NOTE: Read ADCL first!
+  register uint16_t res = ADCL;  // NOTE: Read ADCL first!
   res |= ADCH << 8;
   adc_async_res[adc_async_state.chan] = res;
   if( ++adc_async_state.chan >= ADC_ASYNC_N_CHAN)  {
     adc_async_state.chan = 0;
     adc_async_state.valid = 1;
+    analog_stick_eval();   // --> analog stick evaluation 
   }
   ADMUX = (ADMUX & 0b11110000) | adc_async_state.chan;  // select next adc channel
   ADCSRA |= 1<<ADSC;         // start next conversion

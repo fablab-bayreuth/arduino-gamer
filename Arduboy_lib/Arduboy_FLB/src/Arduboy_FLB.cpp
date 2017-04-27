@@ -28,15 +28,12 @@ void Arduboy::begin()
 {
   boot(); // required
   bootUtils();
-
   bootLogo();
 
   // Audio
-  // TODO
-  //tunes.initChannel(PIN_SPEAKER_1);
-  //tunes.initChannel(PIN_SPEAKER_2);
-  //audio.begin();
-  //
+  tunes.initChannel(PIN_SPEAKER_1);
+  tunes.initChannel(PIN_SPEAKER_2);
+  audio.begin();
 }
 
 // this is pusposely duplicated (without logo) so that
@@ -48,11 +45,9 @@ void Arduboy::beginNoLogo()
   bootUtils();
 
   // Audio
-  //TODO
-  //tunes.initChannel(PIN_SPEAKER_1);
-  //tunes.initChannel(PIN_SPEAKER_2);
-  //audio.begin();
-  //
+  tunes.initChannel(PIN_SPEAKER_1);
+  tunes.initChannel(PIN_SPEAKER_2);
+  audio.begin();
 }
 
 void Arduboy::bootUtils()

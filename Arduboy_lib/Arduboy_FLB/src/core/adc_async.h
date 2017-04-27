@@ -25,6 +25,9 @@ uint8_t adc_async_available(void);
 // Read last stored result for channel <chan>
 uint16_t adc_async_get_last_res( uint8_t chan );
 
+// Get analog stick direction state flags
+uint8_t analog_stick_get_state(void);
+
 //============================================================================================================
 
 #ifdef __cplusplus

@@ -9,6 +9,8 @@
  version 2.1 of the License, or (at your option) any later version.
  */
 
+#define HALF_SPEED  0
+
 #include "Arduboy_FLB.h"
 #include "breakout_bitmaps.h"
 
@@ -659,7 +661,12 @@ void enterHighScore(byte file)
 void setup()
 {
   arduboy.begin();
-  arduboy.setFrameRate(60);
+  #if (HALF_SPEED)
+    arduboy.setFrameRate(30);
+  #else
+    arduboy.setFrameRate(60);
+  #endif
+    
   arduboy.print("Hello World!");
   arduboy.display();
   intro();
@@ -697,6 +704,9 @@ void loop()
 
   if (lives>0)
   {
+    while (!arduboy.nextFrame())
+      ;  // wait
+
     drawPaddle();
 
     //Pause game if FIRE pressed
