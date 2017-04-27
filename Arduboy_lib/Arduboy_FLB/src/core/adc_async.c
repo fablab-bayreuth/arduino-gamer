@@ -52,7 +52,7 @@ void analog_stick_eval(void)
     else if (adc_res < STICK_THRES_LEFT)
         state |= LEFT_BUTTON;
     
-    adc_res = adc_async_res[ANALOG_STICK_X_CHAN];
+    adc_res = adc_async_res[ANALOG_STICK_Y_CHAN];
     if (adc_res > STICK_THRES_RIGHT)
         state |= UP_BUTTON;
     else if (adc_res < STICK_THRES_LEFT)
