@@ -1,5 +1,6 @@
 //=================================================================================================
-// Constant definitions for Fablab Bayreuth Arduino Gamer clone
+// Hardware profile for the Fablab Bayreuth Arduino Gamer clone
+// To be used with the Arduboy library.
 //=================================================================================================
 
 #ifndef ARDUBOY_FLB_CONFIG_H

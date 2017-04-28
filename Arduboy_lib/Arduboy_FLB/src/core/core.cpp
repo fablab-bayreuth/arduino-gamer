@@ -210,7 +210,7 @@ void ArduboyCore::saveMuchPower()
     power_timer2_disable();
   #endif
   
-  #ifdef HAVE_HWSERIAL1
+  #ifdef HAVE_HWSERIAL1  // TODO fix me
     power_usart1_disable();
   #endif
   // we need USB, for now (to allow triggered reboots to reprogram)
