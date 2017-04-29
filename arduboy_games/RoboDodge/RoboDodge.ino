@@ -30,7 +30,7 @@
 
 #include <SPI.h>
 #include <EEPROM.h>
-#include "Arduboy_FLB.h"
+#include "Arduboy.h"
 #include "Bitmaps.h"
 
 Arduboy display;

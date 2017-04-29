@@ -1,5 +1,19 @@
 # Arduboy2 Library
 
+modified to be usable with the [Fablab Bayreuth](http://fablab-bayreuth.de/)
+[Arduino Gamer](http://wiki.fablab-bayreuth.de/projekte:arduino-gamer) hardware.
+
+Changes compared to the original version:
+  * Different pin mapping (display, buttons, speaker)
+  * Direction keys are mapped to the analog stick
+  
+The library applies the modification only if an ATmega328 processor type is selected.
+Otherwise, the original Arduboy version is used.
+
+
+
+# Arduboy2 Library
+
 The Arduboy2 library is maintained in a git repository hosted on [GitHub](https://github.com/) at:
 
 https://github.com/MLXXXp/Arduboy2

@@ -1,4 +1,4 @@
-#include "Arduboy_FLB.h"
+#include "Arduboy.h"
 #ifndef WEAPONS_H
 #define WEAPONS_H
 

@@ -11,7 +11,7 @@
 
 #define HALF_SPEED  0
 
-#include "Arduboy_FLB.h"
+#include "Arduboy.h"
 #include "breakout_bitmaps.h"
 
 Arduboy arduboy;

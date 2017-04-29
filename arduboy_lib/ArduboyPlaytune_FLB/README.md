@@ -1,5 +1,18 @@
 # ArduboyPlaytune
 
+modified to be usable with the [Fablab Bayreuth](http://fablab-bayreuth.de/)
+[Arduino Gamer](http://wiki.fablab-bayreuth.de/projekte:arduino-gamer) hardware.
+
+Changes compared to the original version:
+  * Audio generation uses Timer2 instead of Timer3 (not available on the ATmega328)
+  
+The library applies the modification only if an ATmega328 processor type is selcted.
+Otherwise, the original Arduboy version is used.
+
+
+
+# ArduboyPlaytune
+
 The ArduboyPlaytune library is maintained in a git repository hosted on [GitHub](https://github.com/) at:
 
 https://github.com/Arduboy/ArduboyPlaytune

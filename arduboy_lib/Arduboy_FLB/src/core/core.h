@@ -9,9 +9,10 @@
 
 // main hardware compile flags
 
-
-#define AB_CLONE_FLB  // Fablab Bayreuth clone hardware
-
+// SM: Gamer hardware is used for ATmega328 processors
+#if __AVR_ATmega328P__
+  #define AB_CLONE_FLB  
+#endif
 
 #if !defined(ARDUBOY_10) && !defined(AB_DEVKIT)  && !defined(AB_CLONE_FLB)
 /// defaults to Arduboy Release 1.0 if not using a boards.txt file
@@ -26,8 +27,8 @@
  *     // #define ARDUBOY_10
  *     #define AB_DEVKIT
  */     
-#define ARDUBOY_10   //< compile for the production Arduboy v1.0
-// #define AB_DEVKIT    //< compile for the official dev kit
+  #define ARDUBOY_10   //< compile for the production Arduboy v1.0
+  // #define AB_DEVKIT    //< compile for the official dev kit
 #endif
 
 
@@ -41,7 +42,6 @@
 #if defined AB_CLONE_FLB
 
     #include "arduboy_flb_config.h"
-    
 
 #elif defined ARDUBOY_10
 

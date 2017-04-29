@@ -44,8 +44,6 @@
 #define BLUE_LED_BIT PORTC5
 
 
-
-
 // bit values for button states
 // these are determined by the buttonsState() function
 

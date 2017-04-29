@@ -1,4 +1,4 @@
-#include "Arduboy_FLB.h"
+#include "Arduboy.h"
 #include "glcdfont.c"
 #include "ab_logo.c"
 
@@ -139,35 +139,40 @@ void Arduboy::initRandomSeed()
   power_adc_enable(); // ADC on
   randomSeed(~rawADC(ADC_TEMP) * ~rawADC(ADC_VOLTAGE) * ~micros() + micros());
   
-  //power_adc_disable(); // ADC off  // SM: Keep ADC on (needed for analog stick)
+  #ifndef AB_CLONE_FLB  // SM: Keep ADC active on the Gamer hardware (needed for analog stick)
+    power_adc_disable(); // ADC off
+  #endif
 }
 
 uint16_t Arduboy::rawADC(byte adc_bits)
 {
-    // SM: We use the ADC interrupt for acquisition of the analog stick.
-    //     Therefore we backup all ADC settings here, and restore after reading.
-    uint8_t adcsra_bak = ADCSRA;  // store this register first (adc interrupt enable here)
-    ADCSRA &= ~(1<<ADIE);         // disable ADC interrupt (race condition ahead)
-    uint8_t adcsrb_bak = ADCSRB;
-    uint8_t admux_bak = ADMUX;
-    
+	#ifdef AB_CLONE_FLB  
+		// SM: On the Gamer, the ADC is used for acquisition of the analog stick.
+		//     Backup ADC settings, and restore after reading.
+		uint8_t adcsra_bak = ADCSRA;  // store this register first (adc interrupt enable here)
+		ADCSRA &= ~(1<<ADIE);         // disable ADC interrupt (race condition ahead)
+		uint8_t adcsrb_bak = ADCSRB;
+		uint8_t admux_bak = ADMUX;
+    #endif
     
   ADMUX = adc_bits;
-  // we also need MUX5 for temperature check
-  if (adc_bits == ADC_TEMP) {
-    #ifdef MUX5
+  #ifndef AB_CLONE_FLB
+	// we also need MUX5 for temperature check
+	if (adc_bits == ADC_TEMP) {
       ADCSRB = _BV(MUX5);
-    #endif
   }
-
+  #endif
+  
   delay(2); // Wait for ADMUX setting to settle
   ADCSRA |= _BV(ADSC); // Start conversion
   while (bit_is_set(ADCSRA,ADSC)); // measuring
   
-  // SM: Restore previous ADC state
-  ADMUX = admux_bak;
-  ADCSRB = adcsrb_bak;
-  ADCSRA = adcsra_bak;  // re-enables adc interrupt if previously set
+  #ifdef AB_CLONE_FLB
+	  // SM: Restore previous ADC state
+	  ADMUX = admux_bak;
+      ADCSRB = adcsrb_bak;
+      ADCSRA = adcsra_bak;  // re-enables adc interrupt if previously set
+  #endif
 
   return ADC;
 }

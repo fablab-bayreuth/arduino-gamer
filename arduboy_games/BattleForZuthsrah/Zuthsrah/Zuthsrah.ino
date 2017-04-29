@@ -1,6 +1,6 @@
 #include <SPI.h>
 #include <EEPROM.h>
-#include "Arduboy_FLB.h"
+#include "Arduboy.h"
 #include "bitmaps.h"
 #include "Character.h"
 #include "Weapons.h"

@@ -1,4 +1,4 @@
-#include "Arduboy_FLB.h"
+#include "Arduboy.h"
 
 #ifndef STARZ_H
 #define STARZ_H

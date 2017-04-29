@@ -1,3 +1,15 @@
+# ArduboyTones Library
+
+modified to be usable with the [Fablab Bayreuth](http://fablab-bayreuth.de/)
+[Arduino Gamer](http://wiki.fablab-bayreuth.de/projekte:arduino-gamer) hardware.
+
+Changes compared to the original version:
+  * Audio generation uses Timer1 instead of Timer3 (not available on the ATmega328)
+  
+The library applies the modification only if an ATmega328 processor type is selcted.
+Otherwise, the original Arduboy version is used.
+
+
 # The ArduboyTones Library
 
 The ArduboyTones library is maintained in a git repository hosted on [GitHub](https://github.com/) at:

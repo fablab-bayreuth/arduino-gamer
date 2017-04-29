@@ -1,7 +1,7 @@
 #ifndef MYARDUBOY_H
 #define MYARDUBOY_H
 
-#include <Arduboy_FLB.h>
+#include <Arduboy.h>
 
 class MyArduboy : public Arduboy
 {

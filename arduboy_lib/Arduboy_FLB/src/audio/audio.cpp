@@ -1,8 +1,8 @@
-#include "Arduboy_FLB.h"
+#include "Arduboy.h"
 #include "audio.h"
 
-// SM: On the Uno, we use the 8-bit timer 2 to emulate a 16-bit timer period
-#if (__AVR_ATmega328P__)
+// SM: On the ATmega328, we use the 8-bit timer 2 to emulate a 16-bit timer period
+#if __AVR_ATmega328P__
     static volatile struct {
       uint8_t high;     // period upper 8 bit
       uint8_t adj_low;  // adjustment for 8 bit timer value (= 256 - period_low + TMR2_WRITE_ADJ)
@@ -58,9 +58,9 @@ void ArduboyAudio::on()
   power_timer1_enable();
   
   // SM: Use Timer 3 on 32u4, Timer 2 Uno  
-  #if (__AVR_ATmega32U4__)
+  #if __AVR_ATmega32U4__
     power_timer3_enable();
-  #elif (__AVR_ATmega328P__)
+  #elif __AVR_ATmega328P__
     power_timer2_enable();
   #endif
   
@@ -78,9 +78,9 @@ void ArduboyAudio::off()
   power_timer1_disable();
   
   // SM: Use Timer 3 on 32u4, Timer 2 Uno  
-  #if (__AVR_ATmega32U4__)
+  #if __AVR_ATmega32U4__
     power_timer3_disable();
-  #elif (__AVR_ATmega328P__)
+  #elif __AVR_ATmega328P__
     power_timer2_disable();
   #endif
 }
@@ -123,12 +123,12 @@ void ArduboyTunes::initChannel(byte pin)
 
     case 3:
         // SM: Use Timer 3 on 32u4, Timer 2 Uno  
-        #if (__AVR_ATmega32U4__)  // Use timer 3, 16-bit        
+        #if __AVR_ATmega32U4__  // Use timer 3, 16-bit        
             TCCR3A = 0;
             TCCR3B = 0;
             bitWrite(TCCR3B, WGM32, 1);
             bitWrite(TCCR3B, CS30, 1);
-        #elif (__AVR_ATmega328P__)  // Use timer 2, 8-bit, with emulated 16-bit period
+        #elif __AVR_ATmega328P__  // Use timer 2, 8-bit, with emulated 16-bit period
             
             // Disable timer-interrupts:
             uint8_t sreg_bak = SREG;  // Backup global interrupt flag
@@ -198,7 +198,7 @@ void ArduboyTunes::playNote(byte chan, byte note)
             wait_timer_playing = true;
             bitWrite(TIMSK3, OCIE3A, 1);
             
-        #elif (__AVR_ATmega328P__)
+        #elif __AVR_ATmega328P__
             if (prescalar_bits == 0b011)  prescalar_bits = 0b100;   // timer 2, CS2=0b100: 1/64
             TCCR2B = (TCCR2B & 0b11111000) | prescalar_bits;
             
@@ -315,7 +315,7 @@ void ArduboyTunes::closeChannels(void)
           // SM: Use Timer 3 on 32u4, Timer 2 Uno  
           #if __AVR_ATmega32U4__
               TIMSK3 &= ~(1 << OCIE3A);
-          #elif (__AVR_ATmega328P__)
+          #elif __AVR_ATmega328P__
               TIMSK2 = 0;  // all timer 2 interrupts off
           #endif
           break;
@@ -402,7 +402,7 @@ ISR(TIMER1_COMPA_vect)
       ArduboyTunes::soundOutput();
     }
     
-#elif (__AVR_ATmega328P__)
+#elif __AVR_ATmega328P__
 
     //============================================================================================================
     // SM: On the Uno, Timer 2 is only 8-bit wide. To expand the tiemr period, we emulate a 16-bit timer

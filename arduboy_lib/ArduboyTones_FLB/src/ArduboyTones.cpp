@@ -43,7 +43,7 @@ THE SOFTWARE.
 #include "ArduboyTones.h"
 
 
-#if __AVR_ATmega328P__  // SM: On The Uno, use Timer 1
+#ifdef __AVR_ATmega328P__  // SM: On The Uno, use Timer 1
   #define  TCCRxA  TCCR1A
   #define  TCCRxB  TCCR1B
   #define  OCRxA   OCR1A

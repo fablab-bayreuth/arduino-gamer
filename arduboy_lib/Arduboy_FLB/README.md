@@ -1,6 +1,21 @@
 Arduboy Library · `1.1.1`
 ===============
 
+modified to be usable with the [Fablab Bayreuth](http://fablab-bayreuth.de/)
+[Arduino Gamer](http://wiki.fablab-bayreuth.de/projekte:arduino-gamer) hardware.
+
+Changes compared to the original version:
+  * Different pin mapping (display, buttons, speaker)
+  * Direction keys are mapped to the analog stick
+  * Audio generation uses Timer2 instead of Timer3 (not available on the ATmega328)
+  
+The library applies the modification only if an ATmega328 processor type is selcted.
+Otherwise, the original Arduboy version is used.
+
+
+Arduboy Library · `1.1.1`
+===============
+
 Welcome to Arduboy! This is release `1.1.1` of the Arduboy Library.
 
 ## About

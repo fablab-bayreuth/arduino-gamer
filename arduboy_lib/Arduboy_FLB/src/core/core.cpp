@@ -1,7 +1,9 @@
 #include "core.h"
 
-// SM: Use background adc acquisition for analog stick evaluation
-#include "adc_async.h"
+#ifdef AB_CLONE_FLB
+    // SM: Background ADC acquisition for analog stick evaluation on the Gamer
+    #include "adc_async.h"
+#endif
 
 // need to redeclare these here since we declare them static in .h
 volatile uint8_t *ArduboyCore::mosiport, 
@@ -141,9 +143,10 @@ void ArduboyCore::bootPins()
   delay(10);          // wait 10ms
   digitalWrite(RST, HIGH);  // bring out of reset
   
-  //SM: Use adc_async for background acquisition of the analog stick
-  adc_async_init();
-  sei();
+  #ifdef AB_CLONE_FLB
+    //SM: On the gamer, init background acquisition of the analog stick
+    adc_async_init();
+  #endif
 }
 
 void ArduboyCore::bootLCD()
@@ -199,18 +202,20 @@ void ArduboyCore::idle()
 
 void ArduboyCore::saveMuchPower()
 {
-  //power_adc_disable();  // SM: Keep ADC on (needed for analog stick)
+  #ifndef AB_CLONE_FLB
+    power_adc_disable();  // SM: Keep ADC on (needed for analog stick)
+  #endif
   
   power_usart0_disable();
   power_twi_disable();
   // timer 0 is for millis()
   // timers 1 and 3 are for music and sounds
   
-  #if (! __AVR_ATmega328P__)  // SM: Use Timer 2 on Uno  
+  #ifndef AB_CLONE_FLB  // SM: On the ATmega328, use Timer 2 for audio
     power_timer2_disable();
   #endif
   
-  #ifdef HAVE_HWSERIAL1  // TODO fix me
+  #if __AVR_ATmega32u4__
     power_usart1_disable();
   #endif
   // we need USB, for now (to allow triggered reboots to reprogram)
@@ -350,8 +355,6 @@ uint8_t ArduboyCore::buttonsState()
   
 // SM: Button evaluation for Arduino-Gamer clone (ATmega328)
 #elif defined(AB_CLONE_FLB)  
-  #if defined(__AVR_ATmega328P__)
-  
     #if 0  // Use digital direction buttons
         buttons = ((~PIND) & 0b00111100);  // left, down, right, up/A
         buttons |= ((~PINB) & 0b00000001);  // Stick
@@ -362,10 +365,6 @@ uint8_t ArduboyCore::buttonsState()
         // Push buttons
         buttons |= ((~PIND) & 0b00111100);  // D, C, B, A
     #endif
-    
-  #else
-    #error "Processor type not supported yet"
-  #endif
 #endif
   
   return buttons;

@@ -28,17 +28,17 @@
 #define PIXEL_SAFE_MODE
 
 // compare Vcc to 1.1 bandgap
-// SM: add adc channel def for ATmega328
-#ifdef MUX4
+// SM: Need different ADC settings for the ATmega328
+#if __AVR_ATmega32u4__
   #define ADC_VOLTAGE (_BV(REFS0) | _BV(MUX4) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1))   // 1.1V bandgap ref on ATmega32U4
 #else
   #define ADC_VOLTAGE (_BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1))     // 1.1V bandgap ref on ATmega328
 #endif
 
 // compare temperature to 2.5 internal reference and _BV(MUX5)
-// SM:XXX: Strange implementation. Internal temperature sensor is selected via MUX=0b100111 on the ATmega32U4
-//         MUX5 is set in rawADC() if the lower bits match
-#ifdef MUX4
+// SM: Internal temperature sensor is selected via MUX=0b100111 on the ATmega32U4
+//     Arduboy-lib sets MUX5 in rawADC() if the lower bits match
+#ifdef __AVR_ATmega32u4__
   #define ADC_TEMP (_BV(REFS0) | _BV(REFS1) | _BV(MUX2) | _BV(MUX1) | _BV(MUX0))
 #else
   #define ADC_TEMP (_BV(REFS0) | _BV(REFS1) | _BV(MUX3) )   // 0b1000 on the ATmega328
