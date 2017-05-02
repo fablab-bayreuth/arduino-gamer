@@ -48,6 +48,13 @@
 #define C_BUTTON _BV(4)
 #define D_BUTTON _BV(5)
 
+#define STICK_BUTTON _BV(2)    // Use as A_BUTTON
+
+#define DPAD_LEFT_BUTTON   D_BUTTON  // Directions on digital pad
+#define DPAD_RIGHT_BUTTON  B_BUTTON
+#define DPAD_UP_BUTTON     A_BUTTON
+#define DPAD_DOWN_BUTTON   C_BUTTON
+
 // Speaker output
 #define PIN_SPEAKER_1 6
 #define PIN_SPEAKER_2 7

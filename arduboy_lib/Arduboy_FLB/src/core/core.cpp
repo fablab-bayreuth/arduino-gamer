@@ -356,14 +356,21 @@ uint8_t ArduboyCore::buttonsState()
 // SM: Button evaluation for Arduino-Gamer clone (ATmega328)
 #elif defined(AB_CLONE_FLB)  
     #if 0  // Use digital direction buttons
-        buttons = ((~PIND) & 0b00111100);  // left, down, right, up/A
-        buttons |= ((~PINB) & 0b00000001);  // Stick
+        buttons = 0;
+        uint8_t dpad = ((~PIND) & 0b00111100);
+        if (dpad & DPAD_LEFT_BUTTON)   buttons |= LEFT_BUTTON;
+        if (dpad & DPAD_RIGHT_BUTTON)  buttons |= RIGHT_BUTTON;
+        if (dpad & DPAD_UP_BUTTON)     buttons |= UP_BUTTON;
+        if (dpad & DPAD_DOWN_BUTTON)   buttons |= DOWN_BUTTON;
+        if ((~PINB) & _BV(STICK_BUTTON_BIT))    // Analog stick push button
+            buttons |= STICK_BUTTON;  
         
     #else  // Use analog stick directions
-        buttons = analog_stick_get_state();
-        
-        // Push buttons
-        buttons |= ((~PIND) & 0b00111100);  // D, C, B, A
+        buttons = analog_stick_get_state();  // Already returns the corresponding direction bits
+                  
+        buttons |= ((~PIND) & 0b00111100);    // D, C, B, A  buttons
+        if ((~PINB) & 1)  // Analog stick push button
+            buttons |= STICK_BUTTON;  
     #endif
 #endif
   

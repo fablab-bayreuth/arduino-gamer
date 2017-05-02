@@ -28,7 +28,7 @@ static volatile uint16_t adc_async_res[ADC_ASYNC_N_CHAN];
 // Analog stick evaluation
 // TODO: Add a zero position calibration
 
-#include "arduboy_flb_config.h"
+#include "arduboy2_flb_config.h"
 
 // stick_state saves the direction flags in the same bits as 
 // the direction button flags (see core.h).

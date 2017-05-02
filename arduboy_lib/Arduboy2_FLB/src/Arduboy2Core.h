@@ -42,7 +42,7 @@
 // ----- Fablab Bayreuth clone hardware profile -----
 #if defined (AB_CLONE_FLB)
     
-    #include "arduboy_flb_config.h"
+    #include "arduboy2_flb_config.h"
 
 // ----- Arduboy pins -----
 #elif defined ARDUBOY_10
