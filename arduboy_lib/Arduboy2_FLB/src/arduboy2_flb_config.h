@@ -133,6 +133,11 @@
 #define ANALOG_STICK_ZERO    512   // adc reading at center position
 #define ANALOG_STICK_THRES    24   // threshold for direction evaluation
 
+// Analog pots
+
+#define ANALOG_POT_LEFT_CHAN    2
+#define ANALOG_POT_RIGHT_CHAN   3
+
 // Various
 
 #ifndef TXLED1    // Defined for some Ardunino boards, but not for the Uno, 

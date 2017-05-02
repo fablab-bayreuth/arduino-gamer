@@ -385,7 +385,16 @@ class Arduboy2Core
      * LEFT_BUTTON, RIGHT_BUTTON, UP_BUTTON, DOWN_BUTTON, A_BUTTON, B_BUTTON
      */
     uint8_t static buttonsState();
+    
+    
+    // SM: On the Arduino Gamer, read analog pot state
+    //     Returns 10-bit analog reading (0..1023).
+    #if defined(AB_CLONE_FLB)  
+      uint16_t Arduboy2Core::readAnalogLeft(void);
+      uint16_t Arduboy2Core::readAnalogRight(void);
+    #endif
 
+    
     /** \brief
      * Paint 8 pixels vertically to the display.
      *

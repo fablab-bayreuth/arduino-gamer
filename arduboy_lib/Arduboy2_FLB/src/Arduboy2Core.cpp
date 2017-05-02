@@ -528,6 +528,25 @@ uint8_t Arduboy2Core::buttonsState()
   return buttons;
 }
 
+
+// SM: On the Arduino Gamer, read analog pot state
+//     Returns 10-bit analog reading (0..1023).
+#if defined(AB_CLONE_FLB)  
+uint16_t Arduboy2Core::readAnalogLeft(void)
+{
+    while (!adc_async_available())  ; // wait until available
+    return adc_async_get_last_res(ANALOG_POT_LEFT_CHAN);
+}
+
+uint16_t Arduboy2Core::readAnalogRight(void)
+{
+    while (!adc_async_available())  ; // wait until available
+    return adc_async_get_last_res(ANALOG_POT_RIGHT_CHAN);
+}
+
+#endif
+
+
 // delay in ms with 16 bit duration
 void Arduboy2Core::delayShort(uint16_t ms)
 {
