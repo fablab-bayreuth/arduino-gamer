@@ -390,8 +390,8 @@ class Arduboy2Core
     // SM: On the Arduino Gamer, read analog pot state
     //     Returns 10-bit analog reading (0..1023).
     #if defined(AB_CLONE_FLB)  
-      uint16_t Arduboy2Core::readAnalogLeft(void);
-      uint16_t Arduboy2Core::readAnalogRight(void);
+      uint16_t readAnalogLeft(void);
+      uint16_t readAnalogRight(void);
     #endif
 
     

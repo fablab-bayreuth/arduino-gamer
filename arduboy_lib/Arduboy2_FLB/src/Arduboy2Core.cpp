@@ -98,6 +98,7 @@ void Arduboy2Core::boot()
   #ifdef AB_CLONE_FLB
     //SM: Use adc_async for background acquisition of the analog stick
     adc_async_init();
+    analog_stick_calib();
   #endif
 }
 

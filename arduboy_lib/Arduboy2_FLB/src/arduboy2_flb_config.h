@@ -130,8 +130,6 @@
 
 #define ANALOG_STICK_X_CHAN  0     // x-axis analog channel
 #define ANALOG_STICK_Y_CHAN  1     // y-axis 
-#define ANALOG_STICK_ZERO    512   // adc reading at center position
-#define ANALOG_STICK_THRES    24   // threshold for direction evaluation
 
 // Analog pots
 

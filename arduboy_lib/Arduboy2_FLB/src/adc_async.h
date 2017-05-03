@@ -28,6 +28,9 @@ uint16_t adc_async_get_last_res( uint8_t chan );
 // Get analog stick direction state flags
 uint8_t analog_stick_get_state(void);
 
+// Calibrate analog stick center position
+void analog_stick_calib(void);
+
 //============================================================================================================
 
 #ifdef __cplusplus

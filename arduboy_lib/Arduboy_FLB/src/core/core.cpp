@@ -110,6 +110,11 @@ void ArduboyCore::boot()
   #endif
 
   saveMuchPower();
+  
+  #ifdef AB_CLONE_FLB  //SM: On the gamer, init background acquisition of the analog stick
+    adc_async_init();
+    analog_stick_calib();
+  #endif
 }
 
 #if F_CPU == 8000000L
@@ -136,17 +141,6 @@ void ArduboyCore::bootPins()
     if (pin==0) break;
     pinMode(pin, mode);
   }
-
-  digitalWrite(RST, HIGH);
-  delay(1);           // VDD (3.3V) goes high at start, lets just chill for a ms
-  digitalWrite(RST, LOW);   // bring reset low
-  delay(10);          // wait 10ms
-  digitalWrite(RST, HIGH);  // bring out of reset
-  
-  #ifdef AB_CLONE_FLB
-    //SM: On the gamer, init background acquisition of the analog stick
-    adc_async_init();
-  #endif
 }
 
 void ArduboyCore::bootLCD()
@@ -158,6 +152,13 @@ void ArduboyCore::bootLCD()
   dcpinmask = digitalPinToBitMask(DC);
 
   SPI.setClockDivider(SPI_CLOCK_DIV2);
+  
+  // Reset display
+  digitalWrite(RST, HIGH);
+  delay(1);           // VDD (3.3V) goes high at start, lets just chill for a ms
+  digitalWrite(RST, LOW);   // bring reset low
+  delay(10);          // wait 10ms
+  digitalWrite(RST, HIGH);  // bring out of reset
 
   LCDCommandMode();
   // run our customized boot-up command sequence against the
@@ -376,3 +377,22 @@ uint8_t ArduboyCore::buttonsState()
   
   return buttons;
 }
+
+
+// SM: On the Arduino Gamer, read analog pot state
+//     Returns 10-bit analog reading (0..1023).
+#if defined(AB_CLONE_FLB)  
+uint16_t ArduboyCore::readAnalogLeft(void)
+{
+    while (!adc_async_available())  ; // wait until available
+    return adc_async_get_last_res(ANALOG_POT_LEFT_CHAN);
+}
+
+uint16_t ArduboyCore::readAnalogRight(void)
+{
+    while (!adc_async_available())  ; // wait until available
+    return adc_async_get_last_res(ANALOG_POT_RIGHT_CHAN);
+}
+
+#endif
+

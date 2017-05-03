@@ -195,7 +195,16 @@ public:
 
     uint8_t static getInput(); __attribute__ ((deprecated("use buttonsState() instead")));
     uint8_t static buttonsState();
+    
+    
+    // SM: On the Arduino Gamer, read analog pot state
+    //     Returns 10-bit analog reading (0..1023).
+    #if defined(AB_CLONE_FLB)  
+      uint16_t readAnalogLeft(void);
+      uint16_t readAnalogRight(void);
+    #endif
 
+    
     // paints 8 pixels (vertically) from a single byte
     //  - 1 is lit, 0 is unlit
     //
