@@ -48,8 +48,6 @@ Gamer_SSD1306 display(OLED_DC, OLED_RESET, OLED_CS);
 
 void setup() {
   display.begin(SSD1306_SWITCHCAPVCC);
-  display.ssd1306_command(SSD1306_SETDISPLAYCLOCKDIV); // Set maximum diplay clock
-  display.ssd1306_command(0xF0);                       
   
   display.setTextColor(WHITE);
   display.setTextSize(FONT_SIZE);
